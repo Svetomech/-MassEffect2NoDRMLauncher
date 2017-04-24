@@ -21,6 +21,7 @@ set "MainConfig=%DesiredAppDirectory%\%ProductName%.txt"
 title %ProductName% %ProductVersion% by %CompanyName%
 color 07
 cls
+cd /d "%parent%"
 
 :: Create settings directory
 if not exist "%DesiredAppDirectory%" md "%DesiredAppDirectory%"
@@ -28,7 +29,7 @@ if not exist "%DesiredAppDirectory%" md "%DesiredAppDirectory%"
 :: Read settings
 if exist "%MainConfig%" (
     call :LoadSetting "ProductVersion" SettingsProductVersion
-	call :LoadSetting "CrackApplied" SettingsCrackApplied
+	call :LoadSetting "CrackApplied" CrackApplied
 )
 
 :: Check version
@@ -40,28 +41,38 @@ if "%SettingsProductVersion%" GEQ "%ProductVersion%" (
     call :SaveSetting "ProductVersion" "%ProductVersion%"
 )
 
-:: Check crack
-
-
-:: Choose csc executable
-call :Is32bitOS
+:: Check admin rights
+call :IsElevatedCMD
 if "%errorlevel%"=="0" (
-    set "is32Bit=True"
+    set "isElevated=True"
 ) else (
     set "errorlevel=0"
 )
 
-if not defined is32Bit (
-    call :WriteLog "Detected that 64-bit OS is running"
-    set "cscPath=%cscPath%\Framework64"
-) else (
-    call :WriteLog "Detected that 32-bit OS is running"
-    set "cscPath=%cscPath%\Framework"
-    
-    set "ProgramFiles(x86)=%ProgramFiles%"
+:: Prepare crack
+echo $client = New-Object System.Net.WebClient> "%ProductName%_helper.ps1"
+echo $client.DownloadFile("https://bitbucket.org/Svetomech/masseffect2crackedlauncher/downloads/MassEffect2.exe", "%cd%\Binaries\MassEffect2.exe.cracked")>> "%ProductName%_helper.ps1"
+
+:: Apply crack, unlock DLC
+if not "%CrackApplied%"=="true" (
+	if not defined isElevated (
+		call :WriteLog "First launch requires Administrator privileges!"
+		goto Exit
+	)
+	
+	call :WriteLog "Cracking the game..."
+	rename "Binaries\MassEffect2.exe" "MassEffect2.exe.original" >nul
+	powershell -nologo -noprofile -executionpolicy bypass -file "%ProductName%_helper.ps1"
+	rename "Binaries\MassEffect2.exe.cracked" "MassEffect2.exe" >nul
+	
+	call :WriteLog "Unlocking DLC..."
+	echo 127.0.0.1 eame2blaze01.ea.com>> "%windir%\System32\drivers\etc\hosts"
+	
+	call :SaveSetting "CrackApplied" true
 )
 
-"%cscPath%\csc.exe" "%filePath%"
+call :WriteLog "Launching the game..."
+start "" "Binaries\MassEffect2.exe"
 
 goto Exit
 
@@ -85,11 +96,12 @@ echo %me%: %~1
 exit /b 0
 
 ::
-:Is32bitOS
-reg query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > nul || set "errorlevel=1"
+:IsElevatedCMD
+net session >nul 2>&1 || set "errorlevel=1"
 exit /b %errorlevel%
 
 ::
 :Exit
-timeout 2 > nul
+erase "%ProductName%_helper.ps1"
+timeout 2 >nul
 exit /b %errorlevel%
