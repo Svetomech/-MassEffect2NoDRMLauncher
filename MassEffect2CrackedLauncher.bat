@@ -10,7 +10,8 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.2.0.0"
+set "ProductVersion=1.2.1.0"
+set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
 set "DesiredAppDirectory=%LocalAppData%\%CompanyName%\%ProductName%"
@@ -63,12 +64,12 @@ if not "%CrackApplied%"=="true" (
 
     call :WriteLog "Cracking the game..."
     rename "%cd%\Binaries\MassEffect2.exe" "MassEffect2.exe.original" >nul 2>&1
-    call :DownloadFile "https://bitbucket.org/Svetomech/masseffect2crackedlauncher/downloads/MassEffect2.exe" "%cd%\Binaries\MassEffect2.exe.cracked"
+    call :DownloadFile "%ProductRepository%/downloads/MassEffect2.exe" "%cd%\Binaries\MassEffect2.exe.cracked"
     rename "%cd%\Binaries\MassEffect2.exe.cracked" "MassEffect2.exe" >nul 2>&1
 
     call :WriteLog "Unlocking DLC..."
     rename "%cd%\Binaries\binkw32.dll" "binkw23.dll" >nul 2>&1
-    call :DownloadFile "https://bitbucket.org/Svetomech/masseffect2crackedlauncher/downloads/binkw32.dll" "%cd%\Binaries\binkw32.dll.cracked"
+    call :DownloadFile "%ProductRepository%/downloads/binkw32.dll" "%cd%\Binaries\binkw32.dll.cracked"
     rename "%cd%\Binaries\binkw32.dll.cracked" "binkw32.dll" >nul 2>&1
 
     call :SaveSetting "CrackApplied" "true"
@@ -105,12 +106,6 @@ if not exist "%cd%\Binaries" set "errorlevel=1"
 if not exist "%cd%\Binaries\MassEffect2.exe" set "errorlevel=1"
 if not exist "%cd%\Binaries\binkw32.dll" set "errorlevel=1"
 exit /b %errorlevel%
-
-REM ::
-REM :IsElevatedCMD
-REM set "errorlevel=0"
-REM net session >nul 2>&1 || set "errorlevel=1"
-REM exit /b %errorlevel%
 
 ::
 :HasInternetAccess
