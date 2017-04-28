@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.3.0.0"
+set "ProductVersion=1.4.0.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -19,7 +19,7 @@ set "MainConfig=%DesiredAppDirectory%\%ProductName%.txt"
 
 
 ::()
-:Main
+:Main: private
 :: Some initialisation work
 title %ProductName% %ProductVersion% by %CompanyName%
 color 07
@@ -59,7 +59,7 @@ if "%CrackApplied%"=="true" (
 call :HasInternetAccess
 if not "%errorlevel%"=="0" (
     call :WriteLog "First run requires Internet connection!"
-    call :Exit
+    call :Restart
 )
 
 call :WriteLog "Cracking the game..."
@@ -81,54 +81,59 @@ exit
 
 
 ::(key, out variableName)
-:LoadSetting
+:LoadSetting: public
 for /f "tokens=1  delims=[]" %%n in ('find /i /n "%~1" ^<"%MainConfig%"') do set /a "$n=%%n+1"
 for /f "tokens=1* delims=[]" %%a in ('find /n /v "" ^<"%MainConfig%"^|findstr /b "\[%$n%\]"') do set "%~2=%%b"
 exit /b
 
 ::(key, value)
-:SaveSetting
+:SaveSetting: public
 echo %~1    %date% %time%>> "%MainConfig%"
 echo %~2>> "%MainConfig%"
 echo.>> "%MainConfig%"
 exit /b
 
 ::(message)
-:WriteLog
+:WriteLog: public
 echo %me%: %~1
 exit /b
 
 ::()
-:IsDirectoryValid
+:IsDirectoryValid: private
 set "errorlevel=0"
 if not exist "%cd%\Binaries" set "errorlevel=1"
 if not exist "%cd%\Binaries\MassEffect2.exe" set "errorlevel=1"
 if not exist "%cd%\Binaries\binkw32.dll" set "errorlevel=1"
 exit /b %errorlevel%
 
-REM Site dependant on ProductRepository
 ::()
-:HasInternetAccess
+:HasInternetAccess: private
 set "errorlevel=0"
 ping bitbucket.org -n 1 -w 1000 >nul 2>&1 || set "errorlevel=1"
 exit /b %errorlevel%
 
-REM Random helper name, fileName vs filePath
 ::(address, filePath)
-:DownloadFile
-echo $client = New-Object System.Net.WebClient> "%temp%\%ProductName%_helper.ps1"
-echo $client.DownloadFile("%~1", "%~2")>> "%temp%\%ProductName%_helper.ps1"
-powershell -nologo -noprofile -executionpolicy bypass -file "%temp%\%ProductName%_helper.ps1"
-erase "%temp%\%ProductName%_helper.ps1"
+:DownloadFile: public
+set "helperPath=%temp%\%ProductName%_helper-%random%.ps1"
+echo $client = New-Object System.Net.WebClient> "%helperPath%"
+echo $client.DownloadFile("%~1", "%~2")>> "%helperPath%"
+powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%"
+erase "%helperPath%"
 exit /b
 
 ::()
-:Launch
+:Launch: private
 call :WriteLog "Launching the game..."
 start "" "%cd%\Binaries\MassEffect2.exe"
 exit /b
 
 ::()
-:Exit
+:Restart: public
+call :WriteLog "Restarting the app..."
+timeout 2 >nul 2>&1
+goto Main
+
+::()
+:Exit: public
 timeout 2 >nul 2>&1
 exit
