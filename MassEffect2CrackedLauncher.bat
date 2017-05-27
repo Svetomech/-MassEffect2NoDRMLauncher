@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.3.0"
+set "ProductVersion=1.5.4.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -122,7 +122,7 @@ powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%" >nul 
 erase "%helperPath%" >nul 2>&1
 exit /b
 
-:Restart: ""
+:Restart: "args="
 call :WriteLog "Restarting..."
 timeout /t 2 >nul 2>&1
 goto Main
