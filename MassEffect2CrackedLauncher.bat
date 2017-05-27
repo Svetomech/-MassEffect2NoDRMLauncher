@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.4.0.0"
+set "ProductVersion=1.4.1.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -18,8 +18,7 @@ set "DesiredAppDirectory=%LocalAppData%\%CompanyName%\%ProductName%"
 set "MainConfig=%DesiredAppDirectory%\%ProductName%.txt"
 
 
-::()
-:Main: private
+:Main:
 :: Some initialisation work
 title %ProductName% %ProductVersion% by %CompanyName%
 color 07
@@ -56,7 +55,7 @@ if "%CrackApplied%"=="true" (
 )
 
 :: Case 2 - SteamRip
-call :HasInternetAccess
+call :IsNetworkAvailable "bitbucket.org"
 if not "%errorlevel%"=="0" (
     call :WriteLog "First run requires Internet connection!"
     call :Restart
@@ -80,40 +79,43 @@ call :Exit
 exit
 
 
-::(key, out variableName)
-:LoadSetting: public
-for /f "tokens=1  delims=[]" %%n in ('find /i /n "%~1" ^<"%MainConfig%"') do set /a "$n=%%n+1"
-for /f "tokens=1* delims=[]" %%a in ('find /n /v "" ^<"%MainConfig%"^|findstr /b "\[%$n%\]"') do set "%~2=%%b"
-exit /b
+:: PRIVATE
 
-::(key, value)
-:SaveSetting: public
-echo %~1    %date% %time%>> "%MainConfig%"
-echo %~2>> "%MainConfig%"
-echo.>> "%MainConfig%"
-exit /b
-
-::(message)
-:WriteLog: public
-echo %me%: %~1
-exit /b
-
-::()
-:IsDirectoryValid: private
+:IsDirectoryValid: ""
 set "errorlevel=0"
 if not exist "%cd%\Binaries" set "errorlevel=1"
 if not exist "%cd%\Binaries\MassEffect2.exe" set "errorlevel=1"
 if not exist "%cd%\Binaries\binkw32.dll" set "errorlevel=1"
 exit /b %errorlevel%
 
-::()
-:HasInternetAccess: private
+:Launch: ""
+call :WriteLog "Launching the game..."
+start "" "%cd%\Binaries\MassEffect2.exe"
+exit /b
+
+:: PUBLIC
+
+:LoadSetting: "key" variableName
+for /f "tokens=1  delims=[]" %%n in ('find /i /n "%~1" ^<"%MainConfig%"') do set /a "$n=%%n+1"
+for /f "tokens=1* delims=[]" %%a in ('find /n /v "" ^<"%MainConfig%"^|findstr /b "\[%$n%\]"') do set "%~2=%%b"
+exit /b
+
+:SaveSetting: "key" "value"
+echo %~1    %date% %time%>> "%MainConfig%"
+echo %~2>> "%MainConfig%"
+echo.>> "%MainConfig%"
+exit /b
+
+:WriteLog: "message"
+echo %me%: %~1
+exit /b
+
+:IsNetworkAvailable: "server"
 set "errorlevel=0"
-ping bitbucket.org -n 1 -w 1000 >nul 2>&1 || set "errorlevel=1"
+ping %~1 -n 1 -w 1000 >nul 2>&1 || set "errorlevel=1"
 exit /b %errorlevel%
 
-::(address, filePath)
-:DownloadFile: public
+:DownloadFile: "address" "filePath"
 set "helperPath=%temp%\%ProductName%_helper-%random%.ps1"
 echo $client = New-Object System.Net.WebClient> "%helperPath%"
 echo $client.DownloadFile("%~1", "%~2")>> "%helperPath%"
@@ -121,19 +123,11 @@ powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%"
 erase "%helperPath%"
 exit /b
 
-::()
-:Launch: private
-call :WriteLog "Launching the game..."
-start "" "%cd%\Binaries\MassEffect2.exe"
-exit /b
-
-::()
-:Restart: public
+:Restart: ""
 call :WriteLog "Restarting the app..."
 timeout 2 >nul 2>&1
 goto Main
 
-::()
-:Exit: public
+:Exit: ""
 timeout 2 >nul 2>&1
 exit
