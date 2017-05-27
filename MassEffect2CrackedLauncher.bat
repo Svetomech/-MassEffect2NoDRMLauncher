@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.4.1.0"
+set "ProductVersion=1.5.0.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -23,10 +23,10 @@ set "MainConfig=%DesiredAppDirectory%\%ProductName%.txt"
 title %ProductName% %ProductVersion% by %CompanyName%
 color 07
 cls
-cd /d "%parent%"
+chdir /d "%parent%"
 
 :: Read settings
-if not exist "%DesiredAppDirectory%" md "%DesiredAppDirectory%"
+if not exist "%DesiredAppDirectory%" mkdir "%DesiredAppDirectory%"
 if exist "%MainConfig%" (
     call :LoadSetting "ProductVersion" SettingsProductVersion
     call :LoadSetting "CrackApplied" CrackApplied
@@ -90,7 +90,7 @@ exit /b %errorlevel%
 
 :Launch: ""
 call :WriteLog "Launching the game..."
-start "" "%cd%\Binaries\MassEffect2.exe"
+start "" "%cd%\Binaries\MassEffect2.exe" >nul 2>&1
 exit /b
 
 :: PUBLIC
@@ -119,15 +119,15 @@ exit /b %errorlevel%
 set "helperPath=%temp%\%ProductName%_helper-%random%.ps1"
 echo $client = New-Object System.Net.WebClient> "%helperPath%"
 echo $client.DownloadFile("%~1", "%~2")>> "%helperPath%"
-powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%"
-erase "%helperPath%"
+powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%" >nul 2>&1
+erase "%helperPath%" >nul 2>&1
 exit /b
 
 :Restart: ""
 call :WriteLog "Restarting the app..."
-timeout 2 >nul 2>&1
+timeout /t 2 >nul 2>&1
 goto Main
 
 :Exit: ""
-timeout 2 >nul 2>&1
+timeout /t 2 /nobreak >nul 2>&1
 exit
