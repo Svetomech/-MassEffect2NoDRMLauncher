@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.2.0"
+set "ProductVersion=1.5.3.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -33,7 +33,7 @@ if exist "%MainConfig%" (
 )
 
 :: Check version
-if "%ProductVersion%" GEQ "%SettingsProductVersion%" (
+if "%SettingsProductVersion%" LSS "%ProductVersion%" (
     call :WriteLog "Outdated version, updating now..."
     call :SaveSetting "ProductVersion" "%ProductVersion%"
 ) else (
