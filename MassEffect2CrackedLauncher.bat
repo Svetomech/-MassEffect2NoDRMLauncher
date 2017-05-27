@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.1.0"
+set "ProductVersion=1.5.2.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -123,7 +123,7 @@ erase "%helperPath%" >nul 2>&1
 exit /b
 
 :Restart: ""
-call :WriteLog "Restarting the app..."
+call :WriteLog "Restarting..."
 timeout /t 2 >nul 2>&1
 goto Main
 
