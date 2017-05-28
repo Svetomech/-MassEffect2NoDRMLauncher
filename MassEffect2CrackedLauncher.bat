@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.6.0"
+set "ProductVersion=1.5.7.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -20,7 +20,8 @@ set "MainConfig=%DesiredAppDirectory%\%ProductName%.txt"
 
 :Main:
 :: Some initialisation work
-title %ProductName% %ProductVersion% by %CompanyName%
+set "title=%ProductName% %ProductVersion% by %CompanyName%"
+title %title%
 color 07
 cls
 chdir /d "%parent%"
