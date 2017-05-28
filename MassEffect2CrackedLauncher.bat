@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.4.0"
+set "ProductVersion=1.5.5.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -109,6 +109,11 @@ exit /b
 echo %me%: %~1
 exit /b
 
+:IsElevatedCMD: ""
+set "errorlevel=0"
+net session >nul 2>&1 || set "errorlevel=1"
+exit /b %errorlevel%
+
 :IsNetworkAvailable: "server"
 set "errorlevel=0"
 ping %~1 -n 1 -w 1000 >nul 2>&1 || set "errorlevel=1"
@@ -120,6 +125,7 @@ echo $client = New-Object System.Net.WebClient> "%helperPath%"
 echo $client.DownloadFile("%~1", "%~2")>> "%helperPath%"
 powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%" >nul 2>&1
 erase "%helperPath%" >nul 2>&1
+set "helperPath="
 exit /b
 
 :Restart: "args="
