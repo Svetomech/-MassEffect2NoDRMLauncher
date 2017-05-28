@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.5.0"
+set "ProductVersion=1.5.6.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -124,7 +124,7 @@ set "helperPath=%temp%\%ProductName%_helper-%random%.ps1"
 echo $client = New-Object System.Net.WebClient> "%helperPath%"
 echo $client.DownloadFile("%~1", "%~2")>> "%helperPath%"
 powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%" >nul 2>&1
-erase "%helperPath%" >nul 2>&1
+erase /f /s /q /a "%helperPath%" >nul 2>&1
 set "helperPath="
 exit /b
 
