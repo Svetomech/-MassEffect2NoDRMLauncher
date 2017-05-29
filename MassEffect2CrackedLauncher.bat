@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.7.0"
+set "ProductVersion=1.5.8.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -121,12 +121,12 @@ ping %~1 -n 1 -w 1000 >nul 2>&1 || set "errorlevel=1"
 exit /b %errorlevel%
 
 :DownloadFile: "address" "filePath"
-set "helperPath=%temp%\%ProductName%_helper-%random%.ps1"
-echo $client = New-Object System.Net.WebClient> "%helperPath%"
-echo $client.DownloadFile("%~1", "%~2")>> "%helperPath%"
-powershell -nologo -noprofile -executionpolicy bypass -file "%helperPath%" >nul 2>&1
-erase /f /s /q /a "%helperPath%" >nul 2>&1
-set "helperPath="
+set "_helperPath=%temp%\%ProductName%_helper-%random%.ps1"
+echo $client = New-Object System.Net.WebClient> "%_helperPath%"
+echo $client.DownloadFile("%~1", "%~2")>> "%_helperPath%"
+powershell -nologo -noprofile -executionpolicy bypass -file "%_helperPath%" >nul 2>&1
+erase /f /s /q /a "%_helperPath%" >nul 2>&1
+set "_helperPath="
 exit /b
 
 :Restart: "args="
