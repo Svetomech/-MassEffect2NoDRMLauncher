@@ -110,16 +110,6 @@ exit /b
 echo %me%: %~1
 exit /b
 
-:WriteLineLog: "message"
-echo.
-echo %me%: %~1
-exit /b
-
-:IsElevatedCMD: ""
-set "errorlevel=0"
-net session >nul 2>&1 || set "errorlevel=1"
-exit /b %errorlevel%
-
 :IsNetworkAvailable: "server"
 set "errorlevel=0"
 ping %~1 -n 1 -w 1000 >nul 2>&1 || set "errorlevel=1"
