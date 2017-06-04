@@ -10,7 +10,7 @@ set "errorlevel=0"
 :: Application variables
 set "CompanyName=Svetomech"
 set "ProductName=MassEffect2CrackedLauncher"
-set "ProductVersion=1.5.10.0"
+set "ProductVersion=1.5.11.0"
 set "ProductRepository=https://bitbucket.org/Svetomech/masseffect2crackedlauncher"
 
 :: Global variables
@@ -89,7 +89,7 @@ if not exist "%cd%\Binaries\binkw32.dll" set "errorlevel=1"
 exit /b %errorlevel%
 
 :Launch: ""
-call :WriteLog "Launching the game..."
+echo %me%: Launching the game...
 start "" "%cd%\Binaries\MassEffect2.exe" >nul 2>&1
 exit /b
 
@@ -107,6 +107,11 @@ echo.>> "%MainConfig%"
 exit /b
 
 :WriteLog: "message"
+echo %me%: %~1
+exit /b
+
+:WriteLineLog: "message"
+echo.
 echo %me%: %~1
 exit /b
 
@@ -130,7 +135,7 @@ set "_helperPath="
 exit /b
 
 :Restart: "args="
-call :WriteLog "Restarting..."
+echo %me%: Restarting...
 timeout /t 2 >nul 2>&1
 goto Main
 
